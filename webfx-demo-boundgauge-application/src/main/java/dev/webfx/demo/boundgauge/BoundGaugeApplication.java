@@ -30,15 +30,23 @@ public final class BoundGaugeApplication extends Application {
                 .thresholdVisible(true)
                 .animated(false)
                 .build();
-        Slider slider = new Slider(0, 100, 50);
-        slider.setOrientation(Orientation.VERTICAL);
-        gauge.valueProperty().bind(slider.valueProperty());
+        gauge.setMouseTransparent(true); // Otherwise the gauge can prevent interaction with sliders
 
-        Pane root = new Pane(slider, gauge) {
+        Slider valueSlider = new Slider(0, 100, 50);
+        valueSlider.setOrientation(Orientation.VERTICAL);
+        Slider thresholdSlider = new Slider(0, 100, 85);
+        thresholdSlider.setOrientation(Orientation.VERTICAL);
+
+        // Binding Gauge value and threshold with sliders
+        gauge.valueProperty().bind(valueSlider.valueProperty());
+        gauge.tresholdProperty().bind(thresholdSlider.valueProperty());
+
+        Pane root = new Pane(valueSlider, thresholdSlider, gauge) {
             @Override
             public void layoutChildren() {
                 double width = getWidth(), height = getHeight();
-                layoutInArea(slider, 0, 0.1 * height , (width - height) / 2, 0.8 * height, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(valueSlider, 0, 0.1 * height , (width - height) / 2, 0.8 * height, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(thresholdSlider, width - (width - height) / 2, 0.1 * height , (width - height) / 2, 0.8 * height, 0, HPos.CENTER, VPos.CENTER);
                 layoutInArea(gauge, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
             }
         };
