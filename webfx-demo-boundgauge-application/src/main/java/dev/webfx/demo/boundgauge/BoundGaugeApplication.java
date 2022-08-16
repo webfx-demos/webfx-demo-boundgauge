@@ -26,7 +26,6 @@ public final class BoundGaugeApplication extends Application {
                 .sectionTextVisible(true)
                 .title("MODERN")
                 .unit("UNIT")
-                .threshold(85)
                 .thresholdVisible(true)
                 .animated(false)
                 .build();
@@ -35,6 +34,9 @@ public final class BoundGaugeApplication extends Application {
         valueSlider.setOrientation(Orientation.VERTICAL);
         Slider thresholdSlider = new Slider(0, 100, 85);
         thresholdSlider.setOrientation(Orientation.VERTICAL);
+
+        // This improves slider performance on low devices (reduce click target possibilities)
+        gauge.setMouseTransparent(true);
 
         // Binding Gauge value and threshold with sliders
         gauge.valueProperty().bind(valueSlider.valueProperty());
