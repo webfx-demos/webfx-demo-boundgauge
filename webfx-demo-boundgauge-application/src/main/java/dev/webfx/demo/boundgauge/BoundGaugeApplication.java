@@ -31,9 +31,7 @@ public final class BoundGaugeApplication extends Application {
                 .build();
 
         Slider valueSlider = new Slider(0, 100, 50);
-        valueSlider.setOrientation(Orientation.VERTICAL);
         Slider thresholdSlider = new Slider(0, 100, 85);
-        thresholdSlider.setOrientation(Orientation.VERTICAL);
 
         // This improves slider performance on low devices (reduce click target possibilities)
         gauge.setMouseTransparent(true);
@@ -46,9 +44,22 @@ public final class BoundGaugeApplication extends Application {
             @Override
             public void layoutChildren() {
                 double width = getWidth(), height = getHeight();
-                layoutInArea(gauge, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(valueSlider, 0, 0.1 * height , (width - height) / 2, 0.8 * height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(thresholdSlider, width - (width - height) / 2, 0.1 * height , (width - height) / 2, 0.8 * height, 0, HPos.CENTER, VPos.CENTER);
+                Orientation sliderOrientation;
+                if (width >= height) {
+                    sliderOrientation = Orientation.VERTICAL;
+                    double sliderAreaWidth = Math.max(40, (width - height) / 2), sliderAreaHeight = 0.8 * height, sliderY = (height - sliderAreaHeight) / 2;
+                    layoutInArea(gauge, sliderAreaWidth, 0, width - 2 * sliderAreaWidth, height, 0, HPos.CENTER, VPos.CENTER);
+                    layoutInArea(valueSlider, 0, sliderY, sliderAreaWidth, sliderAreaHeight, 0, HPos.CENTER, VPos.CENTER);
+                    layoutInArea(thresholdSlider, width - sliderAreaWidth, sliderY, sliderAreaWidth, sliderAreaHeight, 0, HPos.CENTER, VPos.CENTER);
+                } else {
+                    sliderOrientation = Orientation.HORIZONTAL;
+                    double sliderAreaHeight = Math.max(40, (height - width) / 2), sliderAreaWidth = 0.8 * width, sliderX = (width - sliderAreaWidth) / 2;
+                    layoutInArea(gauge, 0, sliderAreaHeight, width, height - 2 * sliderAreaHeight, 0, HPos.CENTER, VPos.CENTER);
+                    layoutInArea(valueSlider, sliderX, 0, sliderAreaWidth, sliderAreaHeight, 0, HPos.CENTER, VPos.CENTER);
+                    layoutInArea(thresholdSlider, sliderX, height - sliderAreaHeight, sliderAreaWidth, sliderAreaHeight, 0, HPos.CENTER, VPos.CENTER);
+                }
+                valueSlider.setOrientation(sliderOrientation);
+                thresholdSlider.setOrientation(sliderOrientation);
             }
         };
         root.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
